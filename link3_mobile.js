@@ -632,7 +632,8 @@ class Link3_checker{
 // Объект создается с массива кук твиттера и ОДНОГО КУКИ линк3, когда появляется новое событие ВСЕ аккаунты ТВИТТЕРА по КУКИ и затем ID этого события добавляется в массив УЖЕ ВОЙДЕННЫХ
 async function main(){
     const link3Authorization = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWE0NTBjMWEtODE0Ny00NjkyLWIyZTctMDBiMzc5N2VjODE4IiwidGVtcF91c2VyIjpmYWxzZSwiZXhwIjoxNjg3MDk5MjU2LCJpYXQiOjE2ODY0OTQ0NTYsImlzcyI6ImxpbmszLnRvIn0.U_PCIZl68St4J4T13CnUK6czZKQmnsVt2ztg3oqN58E'
-    
+    const mainTwitterCookie = link3.cookieBatch[0]
+
     const link3 = new Link3_checker(
         link3Authorization,
         mainTwitterCookie,
@@ -646,7 +647,6 @@ async function main(){
         link3.cookieBatch.push(line.replace('\n', ''));
     }
 
-    const mainTwitterCookie = link3.cookieBatch[0]
 
     link3.userResponse = prompt('Хотите использовать прокси Y/N ? ')
 
