@@ -1,7 +1,20 @@
 import { CyberConnect, event } from "./cc.module"
 import { Twitter } from "./twitter.module"
 import { headers } from "./twitter.module"
+import * as readline from 'readline'
 import * as fs from 'fs'
+
+async function myReadline(fileName: string): Promise<string[]> {
+    const array: string[] = []
+    const readInterface = readline.createInterface({
+        input: fs.createReadStream(fileName),
+        crlfDelay: Infinity,
+    })
+    for await (const line of readInterface) {
+        array.push(line)
+    }
+    return array
+}
 
 async function main() {
     fs.writeFileSync('broken.txt', '')
@@ -9,10 +22,12 @@ async function main() {
     let enteredEvents: string[] = []
     let brokenCT0: string[] = []
 
-    const cyberconnect = new CyberConnect('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWE0NTBjMWEtODE0Ny00NjkyLWIyZTctMDBiMzc5N2VjODE4IiwiZXhwIjoxNjgxMzkwODQ3LCJpYXQiOjE2ODA3ODYwNDcsImlzcyI6ImxpbmszLnRvIn0.gWiUy1KnGqm0eegbGJsdT8lcW3u8g9syGSMz6UixdrY')
+    const cyberconnect = new CyberConnect('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWE0NTBjMWEtODE0Ny00NjkyLWIyZTctMDBiMzc5N2VjODE4IiwidGVtcF91c2VyIjpmYWxzZSwiZXhwIjoxNjg3NjgzNzAzLCJpYXQiOjE2ODcwNzg5MDMsImlzcyI6ImxpbmszLnRvIn0.L2mo-025fO3zLTuAdRwpGeX58rZ9kAb5OSVYfpPWLT8')
     
-    const twitterCookies:string[] = fs.readFileSync('cookies.txt', 'utf-8').split('\r\n')
-    const proxies: string[] = fs.readFileSync('proxies.txt', 'utf-8').split('\r\n')
+    const twitterCookies = await myReadline('cookies.txt')
+    const proxies = await myReadline('proxies.txt')
+
+    console.log(twitterCookies)
 
     async function main() {
         try{
@@ -23,8 +38,8 @@ async function main() {
                 if(!enteredEvents.includes(event.id)) {
                     console.log('тут2')
                     const twitterLink = await cyberconnect.getTwitterLink(event.id, event.title)
-                    console.log(twitterLink)
-                    // const twitterLink = 'https://twitter.com/i/spaces/1yNGaNkepjDJj'
+                    // console.log(twitterLink)
+                    // const twitterLink = 'https://twitter.com/i/spaces/1ZkKzXmEvnDJv'
                     if(twitterLink) {
                         console.log('тут3')
                         console.log(`Вступаем в ${event.title}`)
@@ -36,6 +51,7 @@ async function main() {
                                     const audioCookie = await Twitter.getCookie(jwt, proxies[i])
                                     const lifeCycleToken = await Twitter.getLifeCycleToken(cookie, twitterLink, proxies[i])
                                     const session = await Twitter.startWatching(cookie, audioCookie, lifeCycleToken, proxies[i])
+                                    console.log(session, proxies[i])
                                     await Twitter.ping(cookie, audioCookie, session, proxies[i], event.title)   
                                 } catch(e: any) {
                                     const ct0 = cookie.split('; ct0=')[1].split('; ')[0]
@@ -54,7 +70,7 @@ async function main() {
                 }
             }
         } catch(e: any) {
-            console.log(e)
+            console.log(e.cause || e, proxies)
         }
     }
 
