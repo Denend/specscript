@@ -142,8 +142,11 @@ export class Twitter {
         } catch(e: any) {
             if(!e.response)
                 throw new Error(e)
-            if(!e.response.data)
-                throw new Error(JSON.stringify(e.response))
+            if(!e.response.data) {
+                if(e.response.status == 404) throw `${twitterLink} Не началось`
+                // console.log(e.response.status)
+                // throw new Error(e.response)
+            }
             throw new Error(`${JSON.stringify(e.response.data)} ${cookie.split('; ct0=')[1].split('; ')[0]}`)
         }
     }

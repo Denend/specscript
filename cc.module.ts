@@ -46,7 +46,11 @@ export class CyberConnect {
         ).then(response => response.data.data.trendingEvents.list)
 
         const events = response.filter((event: any) => {
-            if(event.lightInfo.hasW3ST && event.status === "LIVE") {
+            // console.log(Math.round(Date.now()/ 1000) - event.startTimestamp)
+            // console.log(event.startTimestamp - Math.round(Date.now()/ 1000))
+            const time = 3 * 1000
+            if(event.lightInfo.hasW3ST && event.startTimestamp - Math.round(Date.now()/ 1000) < time) {
+            // if(event.lightInfo.hasW3ST) {
                 return event
             }
         })
