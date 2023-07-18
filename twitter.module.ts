@@ -226,6 +226,6 @@ export class Twitter {
                         console.log(e)
                 }
             }
-        }, 40_000)
+        }, 20_000)
     }        
 }
